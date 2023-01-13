@@ -7,7 +7,6 @@ the following technologies!
 
 * React
 * AWS
-* Spring Boot
 
 If you'd like to find out a little more about me here is a link to my portfolio!
 
