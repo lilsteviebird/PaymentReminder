@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import AddSubscription from './components/Users/AddSubscription';
-import SubscriptionList from './components/Users/SubscriptionList';
+import AddSubscription from './components/Subs/AddSubscription';
+import SubscriptionList from './components/Subs/SubscriptionList';
 
 function App() {
 
