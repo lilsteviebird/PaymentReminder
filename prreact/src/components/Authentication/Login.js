@@ -3,6 +3,7 @@ import {  signInWithEmailAndPassword   } from 'firebase/auth';
 import { auth } from '../../Firebase';
 import { NavLink, useNavigate } from 'react-router-dom'
 import Card from '../UI/Card';
+import classes from './UserAuth.module.css';
  
 const Login = () => {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ const Login = () => {
     }
  
     return(
-        <Card>
+        <Card className = {classes.input}>
         <>
             <main >        
                 <section>

@@ -4,6 +4,8 @@ import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from '../../Firebase';
 import Card from '../UI/Card';
  
+import classes from './UserAuth.module.css';
+
 const Signup = () => {
     const navigate = useNavigate();
  
@@ -32,7 +34,7 @@ const Signup = () => {
     }
  
   return (
-    <Card>
+    <Card className = {classes.input}>
     <div>
     <main >        
         <section>
