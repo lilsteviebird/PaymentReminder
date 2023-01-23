@@ -4,7 +4,6 @@ import GenericButton from  '../UI/GenericButton';
 import ErrorModal from '../UI/ErrorModal';
 import {Picker, Item, Provider, defaultTheme} from '@adobe/react-spectrum'
 import classes from './AddSubscription.module.css';
-import DateObject from "react-date-object";
 
 const AddSubscription = (props) =>{
 
