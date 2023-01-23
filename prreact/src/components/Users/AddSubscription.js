@@ -11,20 +11,21 @@ const AddSubscription = (props) =>{
     const [subscription, setSubscription] = useState('');
     const [subLength, setSubLength] = useState('');
     const [error, setError] = useState();
-    const [subDate, setSubDate] = useState(new DateObject().format());
+    const [subDate, setSubDate] = useState('');
 
     const addSubscriptionHandler = (event) =>{
         event.preventDefault();
-        if(subscription.trim().length === 0 || subLength.trim().length === 0){
-            setError({title: 'Invalid input', message: 'Please enter a valid name and age (non-empty values)'})
+        if(subscription.trim().length === 0 || subLength.trim().length === 0 || subDate === null){
+            setError({title: 'Invalid input', message: 'Please enter a valid name, recurring length, and date started (non-empty values)'})
             return;
         }
 
         //need to change below
+        console.log(subscription, subLength, subDate);
         props.onAddSubscription(subscription, subLength, subDate);
         setSubscription('');
         setSubLength('');
-        setSubDate(new DateObject().format());
+        setSubDate('');
     }
     const nameChangeHandler = (event) => {
         setSubscription(event.target.value);
@@ -33,7 +34,7 @@ const AddSubscription = (props) =>{
         setSubLength(selected);
     }
     const subDateHandler = (event) => {
-        setSubDate(event.target.value);
+        setSubDate(new Date(event.target.value));
     }
     const errorHandler = () =>{
         setError(null);
