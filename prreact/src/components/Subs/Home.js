@@ -105,8 +105,7 @@ const Home = (props) =>{
 
     return(
         <div>
-            <button onClick={logoutHandler}>Logout</button>
-            <AddSubscription onAddSubscription = {addSubscriptionHandler}/>
+            <AddSubscription logoutClick = {logoutHandler} onAddSubscription = {addSubscriptionHandler}/>
             <SubscriptionList subs = {subscriptionList }/>
         </div>
     );

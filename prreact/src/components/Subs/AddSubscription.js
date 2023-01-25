@@ -80,6 +80,7 @@ const AddSubscription = (props) =>{
         <div>
             { error && <ErrorModal title = {error.title} message = {error.message} onConfirm = {errorHandler}/>}
             <Card className = {classes.input}>
+            <GenericButton onClick = {props.logoutClick}>Log Out!</GenericButton>
                 <form onSubmit ={addSubscriptionHandler}>
                     <label htmlFor="subscription-name">Subscription Name</label>
                     <input id="subscription-name" type ="text" value = {subscription} onChange={nameChangeHandler}/>
