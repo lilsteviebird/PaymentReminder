@@ -9,7 +9,6 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-       
     const onLogin = (e) => {
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
@@ -17,7 +16,6 @@ const Login = () => {
             // Signed in
             const user = userCredential.user;
             navigate("/home")
-            console.log(user);
         })
         .catch((error) => {
             const errorCode = error.code;
@@ -65,7 +63,8 @@ const Login = () => {
                                                 
                             <div>
                                 <button                                    
-                                    onClick={onLogin}                                        
+                                    onClick={onLogin}
+                                    emailAddress = {email}                                        
                                 >      
                                     Login                                                                  
                                 </button>

@@ -33,7 +33,13 @@ const AddSubscription = (props) =>{
         setSubLength(selected);
     }
     const subDateHandler = (event) => {
-        setSubDate(new Date(event.target.value));
+        const date = new Date(event.target.value);
+        var year = date.toLocaleString("default", { year: "numeric" });
+        var month = date.toLocaleString("default", { month: "2-digit" });
+        var day = date.toLocaleString("default", { day: "2-digit" });
+        // Generate yyyy-mm-dd date string
+        var formattedDate = year + "-" + month + "-" + day;
+        setSubDate(formattedDate);
     }
     const errorHandler = () =>{
         setError(null);

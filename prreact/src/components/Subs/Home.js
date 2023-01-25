@@ -5,17 +5,41 @@ import SubscriptionList from './SubscriptionList';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import {auth} from '../../Firebase';
 import { useNavigate } from 'react-router-dom';
-const Home = (props) =>{
-    const [subscriptionList, setSubscriptionList] = useState([]);  
+import axios from 'axios';
 
-    const addSubscriptionHandler = (subName, payment, dateSubed) => {
+const Home = (props) =>{
+    const [subscriptionList, setSubscriptionList] = useState([]);
+    const [userEmail, setUserEmail] = useState(''); 
+    const navigate = useNavigate();
+    
+
+    const addSubscriptionHandler = async (subName, payment, dateSubed) => {
+      console.log(auth.currentUser.email);
         setSubscriptionList((prevUsersList) => {
         return [...prevUsersList, {name: subName, 
-         subLength: payment, dateSub: dateSubed, id: Math.random().toString()}];
+         subLength: payment, dateSub: dateSubed, id: Math.random().toString(), emailSent: 0}];
         });
+        handleSubmit(dateSubed, subscriptionList)
     }
-    const navigate = useNavigate();
- 
+    
+    async function handleSubmit (dateSubed, updatedList) {
+      await axios.post(
+        'https://b4btmv57ga.execute-api.us-east-1.amazonaws.com/default/WritePaymentReminderTable',
+        { email:  userEmail, date: dateSubed, subscriptions: updatedList}
+      );
+    }
+    async function getInitialList() {
+      console.log("called func " + auth.currentUser.email)
+      await axios.get(
+        `https://el7ucm9020.execute-api.us-east-1.amazonaws.com/default/ReadPaymentReminderTable`
+      ).then(res =>{
+        var initialList = [];
+        res.data.body.map((obj, i) => {
+          initialList = obj.email === userEmail ? obj.subscriptions : [];
+      });
+        setSubscriptionList(initialList);
+      });
+    }
     const logoutHandler = () => {               
         signOut(auth).then(() => {
         // Sign-out successful.
@@ -32,8 +56,9 @@ const Home = (props) =>{
               // User is signed in, see docs for a list of available properties
               // https://firebase.google.com/docs/reference/js/firebase.User
               const uid = user.uid;
+              setUserEmail(user.email);
               // ...
-              console.log("uid", uid)
+              getInitialList(userEmail);
             } else {
               // User is signed out
               // ...
