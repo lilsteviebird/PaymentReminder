@@ -7,6 +7,9 @@ the following technologies!
 
 * React
 * AWS
+** Lambda
+** DynamoDB
+** API Gateway
 
 If you'd like to find out a little more about me here is a link to my portfolio!
 
