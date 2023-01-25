@@ -4,9 +4,10 @@ import GenericButton from  '../UI/GenericButton';
 import ErrorModal from '../UI/ErrorModal';
 import {Picker, Item, Provider, defaultTheme} from '@adobe/react-spectrum'
 import classes from './AddSubscription.module.css';
+import emailjs from '@emailjs/browser';
 
 const AddSubscription = (props) =>{
-
+    const scheduler = require('node-schedule');
     const [subscription, setSubscription] = useState('');
     const [subLength, setSubLength] = useState('');
     const [error, setError] = useState();
@@ -22,6 +23,7 @@ const AddSubscription = (props) =>{
         //need to change below
         console.log(subscription, subLength, subDate);
         props.onAddSubscription(subscription, subLength, subDate);
+        setNextEmail(subLength);
         setSubscription('');
         setSubLength('');
         setSubDate('');
@@ -43,6 +45,36 @@ const AddSubscription = (props) =>{
     }
     const errorHandler = () =>{
         setError(null);
+    }
+
+    function setNextEmail(recurTemp){
+        var nextEmailDate = new Date(subDate);
+        if(recurTemp === 'monthly'){
+            nextEmailDate = new Date(nextEmailDate.setMonth(nextEmailDate.getMonth() + 1));
+        }
+        if(recurTemp === "semi-annually"){
+            nextEmailDate = new Date(nextEmailDate.setMonth(nextEmailDate.getMonth() + 6));
+        }
+        if(recurTemp === "annually"){
+            nextEmailDate = new Date(nextEmailDate.setMonth(nextEmailDate.getFullYear() + 1));
+        }
+        sendNextEmail(nextEmailDate);
+    }
+
+    function sendNextEmail(emailDate){
+        const date = new Date(emailDate.getFullYear(), emailDate.getMonth(), emailDate.getDay(), 5, 30, 0);
+        var templateParams = {
+            name: 'PaymenReminder',
+            notes: 'Check this out!'
+        };
+        const job = scheduler.scheduleJob(date, function(){
+            emailjs.send('service_o9yvcxo', 'template_9ak1xgm', templateParams)
+                        .then(function(response) {
+                            console.log('SUCCESS!', response.status, response.text);
+                        }, function(error) {
+                            console.log('FAILED...', error);
+                        });
+        });
     }
     return(
         <div>

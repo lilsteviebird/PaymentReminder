@@ -11,6 +11,7 @@ const Home = (props) =>{
     const [subscriptionList, setSubscriptionList] = useState([]);
     const [userEmail, setUserEmail] = useState(''); 
     const navigate = useNavigate();
+
     
 
     const addSubscriptionHandler = async (subName, payment, dateSubed) => {
@@ -37,6 +38,14 @@ const Home = (props) =>{
         res.data.body.map((obj, i) => {
           initialList = obj.email === userEmail ? obj.subscriptions : [];
       });
+      if(initialList.length > 0){
+          initialList.forEach(function (item){
+            var changeDate = checkDate(item.dateSub);
+            if(changeDate != item.dateSub){
+              item.dateSub = changeDate;
+            }
+          })
+      }
         setSubscriptionList(initialList);
       });
     }
@@ -48,6 +57,32 @@ const Home = (props) =>{
         }).catch((error) => {
         // An error happened.
         });
+    }
+
+    function checkDate(dateGiven, subLength){
+      const currDate = new Date();
+      const currDay = currDate.getDay();
+      const currMonth = currDate.getMonth();
+      const currYear = currDate.getFullYear();
+      const oldDate = new Date(dateGiven);
+      const oldDay = oldDate.getDay();
+      const oldMonth = oldDate.getMonth();
+      const oldYear = oldDate.getFullYear();
+      var formatDate = oldYear + "-" + oldMonth + "-" + oldDay;
+      if(subLength === "monthly"){
+        if(currMonth === oldMonth + 1 && currDay === oldDay){
+          formatDate = currYear + "-" + currMonth + "-" + currDay;
+        }
+      }else if(subLength === "semi-annually"){
+        if(currMonth === oldMonth + 6 && currDay === oldDay){
+          formatDate = currYear + "-" + currMonth + "-" + currDay;
+        }
+      }else if(subLength === "annually"){
+        if(currYear === oldYear + 1 && currMonth === oldMonth && currDay === oldDay){
+          formatDate = currYear + "-" + currMonth + "-" + currDay;
+        }
+      }
+      return formatDate;
     }
 
     useEffect(()=>{
