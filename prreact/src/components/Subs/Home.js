@@ -15,28 +15,42 @@ const Home = (props) =>{
     
 
     const addSubscriptionHandler = async (subName, payment, dateSubed) => {
-      console.log(auth.currentUser.email);
-        setSubscriptionList((prevUsersList) => {
-        return [...prevUsersList, {name: subName, 
-         subLength: payment, dateSub: dateSubed, id: Math.random().toString(), emailSent: 0}];
-        });
-        handleSubmit(dateSubed, subscriptionList)
-    }
+      const newSub = {name: subName, subLength: payment, dateSub: dateSubed, id: Math.random().toString};
+
+      if(subscriptionList.length === 0){
+        const tempList = [newSub];
+        handleSubmit(subscriptionList);
+        setSubscriptionList(tempList);
+      }else{
+        const newList = [...subscriptionList, newSub];
+        setSubscriptionList(newList);
+        handleSubmit(newList);
+      }
+    }    
+
+    useEffect(()=>{
+      console.log("re-render because subscription list has changed");
+    }, [subscriptionList]);
     
-    async function handleSubmit (dateSubed, updatedList) {
+    async function handleSubmit (updatedList) {
       await axios.post(
         'https://b4btmv57ga.execute-api.us-east-1.amazonaws.com/default/WritePaymentReminderTable',
-        { email:  userEmail, date: dateSubed, subscriptions: updatedList}
+        { email:  userEmail, subscriptions: updatedList}
       );
     }
     async function getInitialList() {
-      console.log("called func " + auth.currentUser.email)
       await axios.get(
         `https://el7ucm9020.execute-api.us-east-1.amazonaws.com/default/ReadPaymentReminderTable`
       ).then(res =>{
+        console.log(res.data.body);
         var initialList = [];
         res.data.body.map((obj, i) => {
-          initialList = obj.email === userEmail ? obj.subscriptions : [];
+          if(userEmail.length === 0){
+            console.log(auth.currentUser);
+            setUserEmail(auth.currentUser.email);
+          }
+          initialList = obj.email === auth.currentUser.email ? obj.subscriptions : [];
+          console.log(initialList);
       });
       if(initialList.length > 0){
           initialList.forEach(function (item){
@@ -91,7 +105,7 @@ const Home = (props) =>{
               // User is signed in, see docs for a list of available properties
               // https://firebase.google.com/docs/reference/js/firebase.User
               const uid = user.uid;
-              setUserEmail(user.email);
+              setUserEmail(auth.currentUser.email);
               // ...
               getInitialList(userEmail);
             } else {
