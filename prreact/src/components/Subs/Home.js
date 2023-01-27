@@ -11,27 +11,23 @@ const Home = (props) =>{
     const [subscriptionList, setSubscriptionList] = useState([]);
     const [userEmail, setUserEmail] = useState(''); 
     const navigate = useNavigate();
-
-    
+    var changeList;
 
     const addSubscriptionHandler = async (subName, payment, dateSubed) => {
       const newSub = {name: subName, subLength: payment, dateSub: dateSubed, id: Math.random().toString};
 
       if(subscriptionList.length === 0){
         const tempList = [newSub];
-        handleSubmit(subscriptionList);
+        changeList = tempList;
+        handleSubmit(tempList);
         setSubscriptionList(tempList);
       }else{
         const newList = [...subscriptionList, newSub];
-        setSubscriptionList(newList);
-        handleSubmit(newList);
+        changeList = newList;
+        setSubscriptionList(changeList);
+        handleSubmit(changeList);
       }
     }    
-
-    useEffect(()=>{
-      console.log("re-render because subscription list has changed");
-    }, [subscriptionList]);
-    
     async function handleSubmit (updatedList) {
       await axios.post(
         'https://b4btmv57ga.execute-api.us-east-1.amazonaws.com/default/WritePaymentReminderTable',
@@ -46,20 +42,28 @@ const Home = (props) =>{
         var initialList = [];
         res.data.body.map((obj, i) => {
           if(userEmail.length === 0){
-            console.log(auth.currentUser);
             setUserEmail(auth.currentUser.email);
           }
-          initialList = obj.email === auth.currentUser.email ? obj.subscriptions : [];
-          console.log(initialList);
+          
+          if(obj.email === auth.currentUser.email){
+            console.log(obj);
+            if(Object.hasOwn(obj,'subscriptions')){
+              initialList = [...initialList, ...obj.subscriptions]
+              console.log(initialList);
+            }
+          }
       });
       if(initialList.length > 0){
           initialList.forEach(function (item){
             var changeDate = checkDate(item.dateSub);
+            console.log("changeDate: " + changeDate);
+            console.log("item date: " + item.dateSub);
             if(changeDate != item.dateSub){
               item.dateSub = changeDate;
             }
           })
       }
+        changeList = initialList;
         setSubscriptionList(initialList);
       });
     }
@@ -74,15 +78,19 @@ const Home = (props) =>{
     }
 
     function checkDate(dateGiven, subLength){
+      console.log("here is the dateGiven: " + dateGiven);
       const currDate = new Date();
-      const currDay = currDate.getDay();
-      const currMonth = currDate.getMonth();
+      const currDay = currDate.getDate();
+      const currMonth = currDate.getMonth() + 1;
       const currYear = currDate.getFullYear();
+      var currFormatDate = currYear + "-" + currMonth + "-" + currDay;
+      console.log("currformat Date: " + currFormatDate);
       const oldDate = new Date(dateGiven);
-      const oldDay = oldDate.getDay();
-      const oldMonth = oldDate.getMonth();
+      const oldDay = oldDate.getDate()+1;
+      const oldMonth = oldDate.getMonth()+1;
       const oldYear = oldDate.getFullYear();
       var formatDate = oldYear + "-" + oldMonth + "-" + oldDay;
+      console.log("format Date: " + formatDate);
       if(subLength === "monthly"){
         if(currMonth === oldMonth + 1 && currDay === oldDay){
           formatDate = currYear + "-" + currMonth + "-" + currDay;

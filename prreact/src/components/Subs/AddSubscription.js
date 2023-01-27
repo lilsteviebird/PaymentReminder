@@ -38,7 +38,8 @@ const AddSubscription = (props) =>{
         const date = new Date(event.target.value);
         var year = date.toLocaleString("default", { year: "numeric" });
         var month = date.toLocaleString("default", { month: "2-digit" });
-        var day = date.toLocaleString("default", { day: "2-digit" });
+        var day = parseInt(date.toLocaleString("default", { day: "2-digit" })) + 1;
+
         // Generate yyyy-mm-dd date string
         var formattedDate = year + "-" + month + "-" + day;
         setSubDate(formattedDate);
